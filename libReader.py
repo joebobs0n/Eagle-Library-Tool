@@ -6,6 +6,7 @@ from tkinter import font as tkfont
 from tkinter import filedialog
 import os
 import xml.etree.ElementTree as et
+import numpy as np
 
 
 class EagleReader(tk.Tk):
@@ -74,6 +75,7 @@ class eagle(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         tabsField(self, controller)
+        self.dimension = 400
 
         self.title = tk.Label(self, text='Eagle Library Reader Page', font=controller.title_font, pady=20)
         self.title.pack()
@@ -84,34 +86,52 @@ class eagle(tk.Frame):
         self.data_frame = tk.Frame(self, padx=5, pady=5)
         self.data_frame.pack()
 
-        self.devices_label = tk.Label(master=self.data_frame, text='Devices:', font=controller.body_font)
+        self.devices_label = tk.Label(master=self.data_frame, text='Device Select:', font=controller.body_font)
         self.devices_label.grid(column=0, row=0, sticky=tk.W)
-        self.devices_listbox = tk.Listbox(master=self.data_frame, width=25, height=44, selectmode=tk.SINGLE)
+        self.devices_listbox = tk.Listbox(master=self.data_frame, width=20, height=22, selectmode=tk.SINGLE)
         self.devices_listbox.bind('<<ListboxSelect>>', self.deviceSelect)
         self.devices_listbox.grid(column=0, row=1)
 
-        self.spacer1 = tk.Canvas(master=self.data_frame, width=5)
-        self.spacer1.grid(column=1, row=1)
+        self.footprints_label = tk.Label(master=self.data_frame, text='Footprint Select:', font=controller.body_font)
+        self.footprints_label.grid(column=1, row=0, sticky=tk.W)
+        self.footprints_listbox = tk.Listbox(master=self.data_frame, width=20, height=22, selectmode=tk.SINGLE)
+        self.footprints_listbox.bind('<<ListboxSelect>>', self.deviceSelect)
+        self.footprints_listbox.grid(column=1, row=1)
 
-        self.footprint_label = tk.Label(master=self.data_frame, text='Footprint:', font=controller.body_font)
-        self.footprint_label.grid(column=2, row=0, sticky=tk.W)
-        self.footprint_canvas = tk.Canvas(master=self.data_frame, width=800, height=800, background='#1f1f1f')
-        self.footprint_canvas.grid(column=2, row=1)
+        self.spacer1 = tk.Canvas(master=self.data_frame, width=5)
+        self.spacer1.grid(column=2, row=1)
+
+        self.footprint_label = tk.Label(master=self.data_frame, text='Footprint View:', font=controller.body_font)
+        self.footprint_label.grid(column=3, row=0, sticky=tk.W)
+        self.footprint_canvas = tk.Canvas(master=self.data_frame, width=self.dimension, height=self.dimension, background='#1f1f1f')
+        self.footprint_canvas.grid(column=3, row=1)
+        self.initCanvas(self.footprint_canvas)
 
         self.spacer2 = tk.Canvas(master=self.data_frame, width=5)
-        self.spacer2.grid(column=3, row=1)
+        self.spacer2.grid(column=4, row=1)
 
-        self.symbol_label = tk.Label(master=self.data_frame, text='Symbol:', font=controller.body_font)
-        self.symbol_label.grid(column=4, row=0, sticky=tk.W)
-        self.symbol_canvas = tk.Canvas(master=self.data_frame, width=800, height=800, background='#1f1f1f')
-        self.symbol_canvas.grid(column=4, row=1)
+        self.symbol_label = tk.Label(master=self.data_frame, text='Symbol View:', font=controller.body_font)
+        self.symbol_label.grid(column=5, row=0, sticky=tk.W)
+        self.symbol_canvas = tk.Canvas(master=self.data_frame, width=self.dimension, height=self.dimension, background='#1f1f1f')
+        self.symbol_canvas.grid(column=5, row=1)
+        self.initCanvas(self.symbol_canvas)
 
-        self.notes_label = tk.Label(self, text='Notes:', padx=20)
+        self.notes_label = tk.Label(self, text='Notes:', padx=10, pady=10)
         self.notes_label.pack(anchor=tk.W)
+
+    def initCanvas(self, canvas):
+        canvas.create_line(self.dimension/2, self.dimension/2-10, self.dimension/2, self.dimension/2+10, fill='white', width='2')
+        canvas.create_line(self.dimension/2-10, self.dimension/2, self.dimension/2+10, self.dimension/2, fill='white', width='2')
+
+        for x in np.linspace(10, self.dimension-10, round(self.dimension/10-1)):
+            for y in np.linspace(10, self.dimension-10, round(self.dimension/10-1)):
+                canvas.create_oval(x-1, y-1, x+1, y+1, fill='white')
 
     def deviceSelect(self, evt):
         currentDevice = self.devices_listbox.get(self.devices_listbox.curselection())
         self.status_label.configure(text=f'{currentDevice}')
+        currentDevice = [obj for obj in self.devices if obj.attribs['name'] == currentDevice][0]
+        self.notes_label.configure(text=[child.name for child in currentDevice.children])
 
         ## STOPPED HERE
 
@@ -125,7 +145,7 @@ class eagle(tk.Frame):
         self.devices_listbox.delete(0, tk.END)
         for device in self.devices:
             self.devices_listbox.insert(tk.END, device.attribs['name'])
-
+        
 
 
 if __name__ == '__main__':

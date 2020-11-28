@@ -50,10 +50,14 @@ def parseLibrary(path):
 if __name__ == '__main__':
     layers, footprints, symbols, devices = parseLibrary(libPath)
 
-    print('-- Object Lists '.ljust(25, '-'))
-    print('  # layers:'.ljust(19, ' ') + f'{len(layers):4d}')
-    print('  # footprints:'.ljust(19, ' ') + f'{len(footprints):4d}')
-    print('  # symbols:'.ljust(19, ' ') + f'{len(symbols):4d}')
-    print('  # devices:'.ljust(19, ' ') + f'{len(devices):4d}')
+    print('-- Object Lists '.ljust(100, '-'))
+    for layer in layers:
+        print(layer.name, layer.attribs)
+    for footprint in footprints:
+        print(footprint.name, footprint.attribs)
+    for symbol in symbols:
+        print(symbol.name, symbol.attribs)
+    for device in devices:
+        print(device.name, device.attribs)
 
     exit()
