@@ -102,7 +102,7 @@
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;No Library Loaded&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="textFormat">
-          <enum>Qt::AutoText</enum>
+          <enum>Qt::RichText</enum>
          </property>
          <property name="scaledContents">
           <bool>false</bool>
@@ -332,6 +332,9 @@
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustToContents</enum>
          </property>
+         <property name="lineWrapMode">
+          <enum>QTextEdit::NoWrap</enum>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -398,6 +401,9 @@
          <property name="autoFormatting">
           <set>QTextEdit::AutoNone</set>
          </property>
+         <property name="lineWrapMode">
+          <enum>QTextEdit::NoWrap</enum>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -453,6 +459,9 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QTextEdit::NoWrap</enum>
          </property>
          <property name="readOnly">
           <bool>true</bool>
@@ -577,9 +586,6 @@ p, li { white-space: pre-wrap; }
    <property name="toolTip">
     <string>Exit the program (does not export library before quitting)</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
-   </property>
   </action>
   <action name="load_menuitem">
    <property name="text">
@@ -646,7 +652,7 @@ p, li { white-space: pre-wrap; }
     <string>Export library as seen/modified within the tool to saved path</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E</string>
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="exportas_menuitem">
@@ -657,7 +663,7 @@ p, li { white-space: pre-wrap; }
     <string>Export library as seen/modified within the tool to given path</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+E</string>
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="merge_menuitem">
@@ -676,7 +682,7 @@ p, li { white-space: pre-wrap; }
     <string>Closes the currently active library</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+C</string>
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>

@@ -68,7 +68,7 @@ class EagleLibrary:
 
     def __recurse(self, element, depth=0):
         # tmp = f'{depth:2d}: {".  " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'
-        tmp = f'{"   " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'
+        tmp = f'{"    " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'
         self.__printMessage += tmp
         children = list(element)
         for child in children:

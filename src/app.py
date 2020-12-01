@@ -120,6 +120,8 @@ class EagleToolApp(QtWidgets.QMainWindow):
         if len(self.selected_variant_obj) > 0:
             footprint_message_temp = ''
             dev, ftp = self.selected_variant_obj
+            variant_name = dev.attrib['name'] if dev.attrib['name'] != '' else '<no variant name>'
+            footprint_message_temp += f'Variant name: {variant_name}\n'
             footprint_message_temp += f'{self.lib_obj.printLibraryStructure(ftp)}\n'
             self.footprint_footnotes.setText(footprint_message_temp)
         else:
