@@ -15,9 +15,15 @@ class EagleLibrary:
             try:
                 devices = [device for device in devices if device.attrib['name'] == select][0]
             except:
-                return None
+                return []
 
         return devices
+
+    def getConnections(self, device, select=None):
+        connections = list(device.iter('device'))
+        if select != None:
+            connections = [obj for obj in connections if obj.attrib['package'] == select]
+        return connections
 
     def getSymbols(self, device):
         symbols = []
@@ -29,7 +35,7 @@ class EagleLibrary:
                 symbol = symbol[0]
                 symbols.append((gate, symbol))
             else:
-                return None
+                return []
 
         return symbols
 
@@ -38,18 +44,21 @@ class EagleLibrary:
         devices = list(device.iter('device'))
 
         for device in devices:
-            footprint = [obj for obj in self.root.iter('package') if obj.attrib['name'] == device.attrib['package']]
-            if len(footprint) == 1:
-                footprint = footprint[0]
-                footprints.append((device, footprint))
-            else:
-                return None
+            try:
+                footprint = [obj for obj in self.root.iter('package') if obj.attrib['name'] == device.attrib['package']]
+                if len(footprint) == 1:
+                    footprint = footprint[0]
+                    footprints.append((device, footprint))
+                else:
+                    return []
+            except:
+                return []
 
         if select:
             try:
                 footprints = [tupl for tupl in footprints if tupl[1].attrib['name'] == select][0]
             except:
-                return None
+                return []
 
         return footprints
 
@@ -58,16 +67,20 @@ class EagleLibrary:
         return layers
 
     def __recurse(self, element, depth=0):
-        print(f'{depth:2d}: {".  " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}')
+        # tmp = f'{depth:2d}: {".  " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'
+        tmp = f'{"   " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'
+        self.__printMessage += tmp
         children = list(element)
         for child in children:
             self.__recurse(child, depth+1)
 
     def printLibraryStructure(self, element=None):
+        self.__printMessage = ''
         if element == None:
             self.__recurse(self.root)
         else:
             self.__recurse(element)
+        return self.__printMessage
 
 
 def printMenu():
@@ -99,21 +112,21 @@ if __name__ == '__main__':
 
         if userChoice == '1':
             # PRINTOUT WHOLE LIBRARY XML
-            lbr_obj.printLibraryStructure()
+            print(lbr_obj.printLibraryStructure())
 
         elif userChoice == '2':
             # TEST GETTING ALL DEVICES
             devices = lbr_obj.getDevices()
             print(''.ljust(100, '-'))
             for device in devices:
-                lbr_obj.printLibraryStructure(device)
+                print(lbr_obj.printLibraryStructure(device))
                 print(''.ljust(100, '-'))
             print(f'Total Devices: {len(devices):3d}')
 
         elif userChoice == '3':
             # TEST GETTING ONE CHOSEN DEVICE
             device = lbr_obj.getDevices('LM324')
-            lbr_obj.printLibraryStructure(device)
+            print(lbr_obj.printLibraryStructure(device))
 
         elif userChoice == '4':
             # TEST GETTING SYMBOLS FROM CHOSEN DEVICE
@@ -122,9 +135,8 @@ if __name__ == '__main__':
             print(''.ljust(100, '-'))
             for symbol in symbols:
                 thisgate, thissymbol = symbol
-                lbr_obj.printLibraryStructure(thisgate)
-                print()
-                lbr_obj.printLibraryStructure(thissymbol)
+                print(lbr_obj.printLibraryStructure(thisgate))
+                print(lbr_obj.printLibraryStructure(thissymbol))
                 print(''.ljust(100, '-'))
             print(f'Total Symbols for {device.attrib["name"]}: {len(symbols):3d}')
 
@@ -135,9 +147,8 @@ if __name__ == '__main__':
             print(''.ljust(100, '-'))
             for footprint in footprints:
                 thisdevice, thisfootprint = footprint
-                lbr_obj.printLibraryStructure(thisdevice)
-                print()
-                lbr_obj.printLibraryStructure(thisfootprint)
+                print(lbr_obj.printLibraryStructure(thisdevice))
+                print(lbr_obj.printLibraryStructure(thisfootprint))
                 print(''.ljust(100, '-'))
             print(f'Total Footprints for {devices.attrib["name"]}: {len(footprints):3d}')
 
@@ -146,15 +157,14 @@ if __name__ == '__main__':
             devices = lbr_obj.getDevices('TAC_SWITCH')
             footprint = lbr_obj.getFootprints(devices, 'TACTILE-PTH')
             thisdevice, thisfootprint = footprint
-            lbr_obj.printLibraryStructure(thisdevice)
-            print()
-            lbr_obj.printLibraryStructure(thisfootprint)
+            print(lbr_obj.printLibraryStructure(thisdevice))
+            print(lbr_obj.printLibraryStructure(thisfootprint))
 
         elif userChoice == '7':
             # TEST GETTING LAYERS
             layers = lbr_obj.getLayers()
             for layer in layers:
-                lbr_obj.printLibraryStructure(layer)
+                print(lbr_obj.printLibraryStructure(layer))
 
         elif userChoice == '8':
             exit()
