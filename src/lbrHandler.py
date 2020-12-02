@@ -3,6 +3,8 @@
 import xml.etree.ElementTree as et
 import os
 
+from PyQt5.QtWidgets import QGraphicsScene
+
 class EagleLibrary:
     def __init__(self, path):
         tree = et.parse(path)
@@ -68,7 +70,8 @@ class EagleLibrary:
 
     def __recurse(self, element, depth=0):
         # tmp = f'{depth:2d}: {".  " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'
-        tmp = f'{"    " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'
+        tagAndText = f'{element.tag} [{element.text}]' if element.text != None and len(element.text) > 1 else f'{element.tag}'
+        tmp = f'{" |  " * depth}{tagAndText}{(" -->  " + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'
         self.__printMessage += tmp
         children = list(element)
         for child in children:
@@ -102,7 +105,7 @@ def printMenu():
         print(f'   {idx}: {option}')
 
 if __name__ == '__main__':
-    mylbr = 'testLib.lbr'
+    mylbr = '../testLib.lbr'
     lbr_obj = EagleLibrary(mylbr)
 
     while(1):

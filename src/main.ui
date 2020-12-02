@@ -10,19 +10,19 @@
     <x>0</x>
     <y>0</y>
     <width>1544</width>
-    <height>1020</height>
+    <height>1041</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>1544</width>
-    <height>1020</height>
+    <height>1041</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>1544</width>
-    <height>1020</height>
+    <height>1041</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -54,7 +54,7 @@
        </size>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
@@ -121,7 +121,7 @@
        <number>0</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="rightMargin">
        <number>0</number>
@@ -155,6 +155,12 @@
           <width>180</width>
           <height>500</height>
          </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -231,6 +237,12 @@
           <height>500</height>
          </size>
         </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
         <property name="interactive">
          <bool>false</bool>
         </property>
@@ -250,6 +262,12 @@
           <height>500</height>
          </size>
         </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
         <property name="interactive">
          <bool>false</bool>
         </property>
@@ -268,6 +286,12 @@
           <width>180</width>
           <height>500</height>
          </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -292,7 +316,7 @@
     <item>
      <widget class="QFrame" name="footnotes_frame">
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
@@ -302,13 +326,13 @@
         <number>0</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="rightMargin">
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <item row="1" column="3">
         <widget class="QTextEdit" name="symbol_footnotes">
@@ -320,14 +344,15 @@
          </property>
          <property name="font">
           <font>
+           <family>Segoe UI</family>
            <pointsize>8</pointsize>
           </font>
          </property>
          <property name="frameShape">
-          <enum>QFrame::Box</enum>
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -364,17 +389,18 @@
          <property name="minimumSize">
           <size>
            <width>500</width>
-           <height>335</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>1390</width>
-           <height>520</height>
+           <width>16777215</width>
+           <height>16777215</height>
           </size>
          </property>
          <property name="font">
           <font>
+           <family>Segoe UI</family>
            <pointsize>8</pointsize>
            <weight>50</weight>
            <bold>false</bold>
@@ -387,10 +413,10 @@
           <bool>false</bool>
          </property>
          <property name="frameShape">
-          <enum>QFrame::Box</enum>
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <property name="lineWidth">
           <number>1</number>
@@ -414,7 +440,7 @@
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="overwriteMode">
@@ -448,14 +474,15 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="font">
           <font>
+           <family>Segoe UI</family>
            <pointsize>8</pointsize>
           </font>
          </property>
          <property name="frameShape">
-          <enum>QFrame::Box</enum>
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Plain</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::AdjustToContents</enum>

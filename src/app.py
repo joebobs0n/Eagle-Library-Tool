@@ -1,11 +1,15 @@
 #!/bin/usr/python3
 
 import src.lbrHandler as lh
+from src.helpers import EagleVisuals as ev
+
 from PyQt5 import QtWidgets, uic, QtGui
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-import webbrowser as web
+from PyQt5.QtGui import QBrush, QPen, QColor, QFont
+from PyQt5.QtCore import Qt
 from pathlib import Path
+import webbrowser as web
+import numpy as np
 import os
 import sys
 
@@ -21,6 +25,10 @@ class EagleToolApp(QtWidgets.QMainWindow):
         self.exportas_menuitem.setEnabled(False)
         self.close_menuitem.setEnabled(False)
 
+        self.initTriggers()
+        self.initGfx()
+
+    def initTriggers(self):
         self.load_menuitem.triggered.connect(self.openLbr)
         self.export_menuitem.triggered.connect(self.exportLbr)
         self.exportas_menuitem.triggered.connect(self.exportAsLbr)
@@ -35,6 +43,34 @@ class EagleToolApp(QtWidgets.QMainWindow):
 
         self.device_list.itemSelectionChanged.connect(self.deviceSelected)
         self.variant_list.itemSelectionChanged.connect(self.variantSelected)
+
+    def initGfx(self):
+        self.backgroundColor = QColor(31, 31, 31)
+
+        self.footprint_scene = QGraphicsScene(self)
+        self.footprint_scene.setSceneRect(-245, -245, 490, 490)
+        self.footprint_gfx.setScene(self.footprint_scene)
+
+        self.symbol_scene = QGraphicsScene(self)
+        self.symbol_scene.setSceneRect(-245, -245, 490, 490)
+        self.symbol_gfx.setScene(self.symbol_scene)
+
+        self.resetGfx(self.footprint_scene)
+        self.resetGfx(self.symbol_scene)
+
+    def resetGfx(self, view):
+        view.clear()
+        view.setBackgroundBrush(QBrush(self.backgroundColor))
+        view.addLine(-10, 0, 10, 0, QPen(Qt.white, 2))
+        view.addLine(0, -10, 0, 10, QPen(Qt.white, 2))
+
+        for x in np.linspace(-240, 240, 49):
+            for y in np.linspace(-240, 240, 49):
+                view.addEllipse(x-1, y-1, 1, 1, QPen(QColor(90, 90, 90)))
+
+        # foo = ev.brushes['criss cross']
+        # foo.setColor(ev.layerColors['2'])
+        # view.addRect(0, 0, 250, 250, QPen(ev.layerColors['2']), foo)
 
     def openLbr(self):
         options = QFileDialog.Options()
@@ -79,7 +115,7 @@ class EagleToolApp(QtWidgets.QMainWindow):
             self.exportas_menuitem.setEnabled(False)
             self.close_menuitem.setEnabled(False)
 
-            self.status_label.setText('<html><head/><body><p><span style=" color:#ff0000;">No Library Loaded</span></p></body></html>')
+            self.status_label.setText('<html><head/><body><p><span style="color:#ff0000;">No Library Loaded</span></p></body></html>')
 
     def exitProgram(self):
         QtWidgets.QApplication.quit()
@@ -157,11 +193,15 @@ class EagleToolApp(QtWidgets.QMainWindow):
 
         self.populateList('variants')
 
+        self.drawSymbol()
+
     def variantSelected(self):
         self.selected_variant_name = self.variant_list.currentItem().text()
         self.selected_variant_obj = self.lib_obj.getFootprints(self.selected_device_obj, self.selected_variant_name)
         self.setConnectionFootnotes()
         self.setFootprintFootnotes()
+
+        self.drawFootprint()
 
     def populateList(self, list):
         if list == 'devices':
@@ -175,3 +215,21 @@ class EagleToolApp(QtWidgets.QMainWindow):
             for variant in self.variant_objs:
                 _, ftp = variant
                 self.variant_list.addItem(ftp.attrib['name'])
+
+    def drawSymbol(self):
+        self.resetGfx(self.symbol_scene)
+        symbolNames = [obj[1].attrib['name'] for obj in self.selected_symbol_objs]
+        for idx, name in enumerate(symbolNames):
+            text = self.symbol_scene.addText(name)
+            text.setPos(-245, -245 + idx*12)
+            text.setDefaultTextColor(ev.layerColors['4'])
+
+    def drawFootprint(self):
+        self.resetGfx(self.footprint_scene)
+        try:
+            footprintName = self.selected_variant_obj[1].attrib['name']
+            text = self.footprint_scene.addText(footprintName)
+            text.setPos(-245, -245)
+            text.setDefaultTextColor(ev.layerColors['4'])
+        except:
+            pass
