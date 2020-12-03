@@ -243,8 +243,20 @@
         <property name="frameShadow">
          <enum>QFrame::Sunken</enum>
         </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContents</enum>
+        </property>
         <property name="interactive">
-         <bool>false</bool>
+         <bool>true</bool>
+        </property>
+        <property name="dragMode">
+         <enum>QGraphicsView::ScrollHandDrag</enum>
         </property>
        </widget>
       </item>
@@ -268,8 +280,20 @@
         <property name="frameShadow">
          <enum>QFrame::Sunken</enum>
         </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContents</enum>
+        </property>
         <property name="interactive">
-         <bool>false</bool>
+         <bool>true</bool>
+        </property>
+        <property name="dragMode">
+         <enum>QGraphicsView::ScrollHandDrag</enum>
         </property>
        </widget>
       </item>
@@ -581,7 +605,7 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="userdefined_menuitem"/>
+    <addaction name="uservalue_menuitem"/>
     <addaction name="nameprefix_menuitem"/>
     <addaction name="merge_menuitem"/>
    </widget>
@@ -593,6 +617,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="readme_menuitem"/>
     <addaction name="separator"/>
     <addaction name="contact_menuitem"/>
+    <addaction name="about_menuitem"/>
    </widget>
    <addaction name="file_menu"/>
    <addaction name="tools_menu"/>
@@ -625,7 +650,7 @@ p, li { white-space: pre-wrap; }
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="userdefined_menuitem">
+  <action name="uservalue_menuitem">
    <property name="text">
     <string>User Defined Setter</string>
    </property>
@@ -710,6 +735,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="about_menuitem">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="toolTip">
+    <string>Display information about the program</string>
    </property>
   </action>
  </widget>

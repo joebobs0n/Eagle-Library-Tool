@@ -5,10 +5,12 @@ import os
 
 from PyQt5.QtWidgets import QGraphicsScene
 
+xml_header = '<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE eagle SYSTEM "eagle.dtd">\n'
+
 class EagleLibrary:
     def __init__(self, path):
-        tree = et.parse(path)
-        self.root = tree.getroot()
+        self.tree = et.parse(path)
+        self.root = self.tree.getroot()
 
     def getDevices(self, select=None):
         devices = list(self.root.iter('deviceset'))
@@ -85,94 +87,7 @@ class EagleLibrary:
             self.__recurse(element)
         return self.__printMessage
 
-
-def printMenu():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    options = [
-        'Print whole library contents',
-        'Get all devices',
-        'Get single device (LM324)',
-        'Get symbols from chosen device (LM324)',
-        'Get all footprints for chosen device (TAC_SWITCH)',
-        'Get chosen footprint (TACTILE-PTH) for chosen device (TAC_SWITCH)',
-        'Get layers',
-        'Exit'
-    ]
-    print(''.ljust(100, '-'))
-    print('Eagle Library Handler (XML) Demonstrations'.center(100))
-    print(''.ljust(100, '-'))
-    for idx, option in enumerate(options, start=1):
-        print(f'   {idx}: {option}')
-
-if __name__ == '__main__':
-    mylbr = '../testLib.lbr'
-    lbr_obj = EagleLibrary(mylbr)
-
-    while(1):
-        printMenu()
-        userChoice = input('User input:')
-        print()
-
-        if userChoice == '1':
-            # PRINTOUT WHOLE LIBRARY XML
-            print(lbr_obj.printLibraryStructure())
-
-        elif userChoice == '2':
-            # TEST GETTING ALL DEVICES
-            devices = lbr_obj.getDevices()
-            print(''.ljust(100, '-'))
-            for device in devices:
-                print(lbr_obj.printLibraryStructure(device))
-                print(''.ljust(100, '-'))
-            print(f'Total Devices: {len(devices):3d}')
-
-        elif userChoice == '3':
-            # TEST GETTING ONE CHOSEN DEVICE
-            device = lbr_obj.getDevices('LM324')
-            print(lbr_obj.printLibraryStructure(device))
-
-        elif userChoice == '4':
-            # TEST GETTING SYMBOLS FROM CHOSEN DEVICE
-            device = lbr_obj.getDevices('LM324')
-            symbols = lbr_obj.getSymbols(device)
-            print(''.ljust(100, '-'))
-            for symbol in symbols:
-                thisgate, thissymbol = symbol
-                print(lbr_obj.printLibraryStructure(thisgate))
-                print(lbr_obj.printLibraryStructure(thissymbol))
-                print(''.ljust(100, '-'))
-            print(f'Total Symbols for {device.attrib["name"]}: {len(symbols):3d}')
-
-        elif userChoice == '5':
-            # TEST GETTING ALL FOOTPRINTS FOR CHOSEN DEVICE
-            devices = lbr_obj.getDevices('TAC_SWITCH')
-            footprints = lbr_obj.getFootprints(devices)
-            print(''.ljust(100, '-'))
-            for footprint in footprints:
-                thisdevice, thisfootprint = footprint
-                print(lbr_obj.printLibraryStructure(thisdevice))
-                print(lbr_obj.printLibraryStructure(thisfootprint))
-                print(''.ljust(100, '-'))
-            print(f'Total Footprints for {devices.attrib["name"]}: {len(footprints):3d}')
-
-        elif userChoice == '6':
-            # TEST GETTING ONE FOOTPRINT FOR CHOSEN DEVICE AND PACKAGE
-            devices = lbr_obj.getDevices('TAC_SWITCH')
-            footprint = lbr_obj.getFootprints(devices, 'TACTILE-PTH')
-            thisdevice, thisfootprint = footprint
-            print(lbr_obj.printLibraryStructure(thisdevice))
-            print(lbr_obj.printLibraryStructure(thisfootprint))
-
-        elif userChoice == '7':
-            # TEST GETTING LAYERS
-            layers = lbr_obj.getLayers()
-            for layer in layers:
-                print(lbr_obj.printLibraryStructure(layer))
-
-        elif userChoice == '8':
-            exit()
-
-        else:
-            print('Bad selection...')
-
-        input('\nPress ENTER to continue...')
+    def exportLibrary(self, filename):
+        with open(filename, 'w') as f:
+            f.write(xml_header)
+        self.tree.write(open(filename, 'ab'), encoding='UTF-8')

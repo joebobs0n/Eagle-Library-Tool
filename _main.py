@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
-from src.app import EagleToolApp
+# from src.app import EagleToolApp
+from src.mainApp import EagleToolApp
 from PyQt5 import QtWidgets
 import sys
 

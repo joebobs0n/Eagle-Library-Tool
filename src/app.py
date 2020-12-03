@@ -12,6 +12,7 @@ import webbrowser as web
 import numpy as np
 import os
 import sys
+import json
 
 os.chdir(sys.path[0])
 
@@ -26,6 +27,7 @@ class EagleToolApp(QtWidgets.QMainWindow):
         self.close_menuitem.setEnabled(False)
 
         self.initTriggers()
+        self.initSettings()
         self.initGfx()
 
     def initTriggers(self):
@@ -40,45 +42,57 @@ class EagleToolApp(QtWidgets.QMainWindow):
         self.github_menuitem.triggered.connect(self.githubPage)
         self.readme_menuitem.triggered.connect(self.showREADME)
         self.contact_menuitem.triggered.connect(self.contactMe)
+        self.about_menuitem.triggered.connect(self.about)
 
         self.device_list.itemSelectionChanged.connect(self.deviceSelected)
         self.variant_list.itemSelectionChanged.connect(self.variantSelected)
 
+    def initSettings(self):
+        if Path('settings.json').exists():
+            with open('settings.json') as f:
+                self.settings = json.load(f)
+
+        gfx_theme_path = f'themes/gfx_{self.settings["gfx_theme"]}.json'
+        if Path(gfx_theme_path).exists():
+            with open(gfx_theme_path) as f:
+                self.gfx_theme = json.load(f)
+        else:
+            with open('themes/gfx_dark.json') as f:
+                self.gfx_theme = json.load(f)
+
     def initGfx(self):
-        self.backgroundColor = QColor(31, 31, 31)
+        self.backgroundColor = QColor(*(self.gfx_theme['background']))
 
         self.footprint_scene = QGraphicsScene(self)
-        self.footprint_scene.setSceneRect(-245, -245, 490, 490)
+        # self.footprint_scene.setSceneRect(-245, -245, 490, 490)
         self.footprint_gfx.setScene(self.footprint_scene)
 
         self.symbol_scene = QGraphicsScene(self)
-        self.symbol_scene.setSceneRect(-245, -245, 490, 490)
+        # self.symbol_scene.setSceneRect(-245, -245, 490, 490)
         self.symbol_gfx.setScene(self.symbol_scene)
 
-        self.resetGfx(self.footprint_scene)
-        self.resetGfx(self.symbol_scene)
+        self.resetGfx(self.footprint_scene, self.footprint_gfx)
+        self.resetGfx(self.symbol_scene, self.symbol_gfx)
 
-    def resetGfx(self, view):
-        view.clear()
-        view.setBackgroundBrush(QBrush(self.backgroundColor))
-        view.addLine(-10, 0, 10, 0, QPen(Qt.white, 2))
-        view.addLine(0, -10, 0, 10, QPen(Qt.white, 2))
+    def resetGfx(self, scene, view):
+        scene.clear()
+        scene.setBackgroundBrush(QBrush(self.backgroundColor))
+        scene.addLine(-10, 0, 10, 0, QPen(QColor(*(self.gfx_theme['origin'])), 2))
+        scene.addLine(0, -10, 0, 10, QPen(QColor(*(self.gfx_theme['origin'])), 2))
 
-        for x in np.linspace(-240, 240, 49):
-            for y in np.linspace(-240, 240, 49):
-                view.addEllipse(x-1, y-1, 1, 1, QPen(QColor(90, 90, 90)))
+        for x in np.linspace(-250, 250, 51):
+            for y in np.linspace(-250, 250, 51):
+                scene.addEllipse(x-1, y-1, 1, 1, QPen(QColor(*(self.gfx_theme['grid']))))
 
-        # foo = ev.brushes['criss cross']
-        # foo.setColor(ev.layerColors['2'])
-        # view.addRect(0, 0, 250, 250, QPen(ev.layerColors['2']), foo)
+        view.centerOn(0, 0)
 
     def openLbr(self):
+        self.closeLbr(prompt=False)
         options = QFileDialog.Options()
         filename, _ = QFileDialog.getOpenFileName(self, "Import Eagle Library File", "","All Files (*);;Eagle Libraries (*.lbr)", options=options)
         filename_path = Path(filename)
         if filename:
             if Path(filename).suffixes[0] == '.lbr':
-                print(filename)
                 self.filename = filename
                 self.lib_obj = lh.EagleLibrary(self.filename)
                 self.status_label.setText(Path(self.filename).name)
@@ -93,13 +107,16 @@ class EagleToolApp(QtWidgets.QMainWindow):
     def exportAsLbr(self):
         print('selected exportAsLbr')
 
-    def closeLbr(self):
-        confirm = QMessageBox.warning(self, 'Close Out Library?', 'Are you sure that you want to close out the current working library?', QMessageBox.Yes | QMessageBox.Save | QMessageBox.Cancel, QMessageBox.Cancel)
-        closeOut = False
-        if confirm == QMessageBox.Yes:
-            closeOut = True
-        elif confirm == QMessageBox.Save:
-            self.exportLbr()
+    def closeLbr(self, prompt=True):
+        if prompt:
+            confirm = QMessageBox.warning(self, 'Close Out Library?', 'Are you sure that you want to close out the current working library?', QMessageBox.Yes | QMessageBox.Save | QMessageBox.Cancel, QMessageBox.Cancel)
+            closeOut = False
+            if confirm == QMessageBox.Yes:
+                closeOut = True
+            elif confirm == QMessageBox.Save:
+                self.exportLbr()
+                closeOut = True
+        else:
             closeOut = True
 
         if closeOut == True:
@@ -114,6 +131,9 @@ class EagleToolApp(QtWidgets.QMainWindow):
             self.export_menuitem.setEnabled(False)
             self.exportas_menuitem.setEnabled(False)
             self.close_menuitem.setEnabled(False)
+
+            self.resetGfx(self.footprint_scene, self.footprint_gfx)
+            self.resetGfx(self.symbol_scene, self.symbol_gfx)
 
             self.status_label.setText('<html><head/><body><p><span style="color:#ff0000;">No Library Loaded</span></p></body></html>')
 
@@ -137,6 +157,9 @@ class EagleToolApp(QtWidgets.QMainWindow):
 
     def contactMe(self):
         QMessageBox.information(self, 'Contact Info', 'Name: Andy Monk\nEmail: czech.monk90@gmail.com', QMessageBox.Close, QMessageBox.Close)
+
+    def about(self):
+        QMessageBox.about(self, 'About Eagle Library Tool', 'The Eagle Library Tool (perhaps come up with a cooler name?) is an Open Source tool provided under the MIT license.')
 
     def setConnectionFootnotes(self):
         self.connections = []
@@ -209,27 +232,33 @@ class EagleToolApp(QtWidgets.QMainWindow):
             self.device_objs = self.lib_obj.getDevices()
             for device in self.device_objs:
                 self.device_list.addItem(device.attrib['name'])
+            if self.settings['lists_autoselect_first']:
+                self.device_list.setCurrentRow(0)
         elif list == 'variants':
             self.variant_list.clear()
             self.variant_objs = self.lib_obj.getFootprints(self.selected_device_obj)
             for variant in self.variant_objs:
                 _, ftp = variant
                 self.variant_list.addItem(ftp.attrib['name'])
+            if self.settings['lists_autoselect_first']:
+                self.variant_list.setCurrentRow(0)
 
     def drawSymbol(self):
-        self.resetGfx(self.symbol_scene)
-        symbolNames = [obj[1].attrib['name'] for obj in self.selected_symbol_objs]
-        for idx, name in enumerate(symbolNames):
-            text = self.symbol_scene.addText(name)
-            text.setPos(-245, -245 + idx*12)
-            text.setDefaultTextColor(ev.layerColors['4'])
+        self.resetGfx(self.symbol_scene, self.symbol_gfx)
+        if self.settings['gfx_display_name']:
+            symbolNames = [obj[1].attrib['name'] for obj in self.selected_symbol_objs]
+            for idx, name in enumerate(symbolNames):
+                text = self.symbol_scene.addText(name)
+                text.setPos(-245, -245 + idx*12)
+                text.setDefaultTextColor(ev.layerColors['4'])
 
     def drawFootprint(self):
-        self.resetGfx(self.footprint_scene)
-        try:
-            footprintName = self.selected_variant_obj[1].attrib['name']
-            text = self.footprint_scene.addText(footprintName)
-            text.setPos(-245, -245)
-            text.setDefaultTextColor(ev.layerColors['4'])
-        except:
-            pass
+        self.resetGfx(self.footprint_scene, self.footprint_gfx)
+        if self.settings['gfx_display_name']:
+            try:
+                footprintName = self.selected_variant_obj[1].attrib['name']
+                text = self.footprint_scene.addText(footprintName)
+                text.setPos(-245, -245)
+                text.setDefaultTextColor(ev.layerColors['4'])
+            except:
+                pass
