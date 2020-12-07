@@ -2,6 +2,7 @@
 
 import src.beHandler as be
 import src.gfxHandler as gfx
+import src.helpers as helpers
 
 from PyQt5 import uic, QtGui
 from PyQt5.QtWidgets import QGraphicsScene, QMainWindow, QFileDialog, QMessageBox
@@ -29,10 +30,6 @@ class EagleToolApp(QMainWindow):
         self.current_savefile = None
         self.unsaved_changes = False
 
-        self.export_menuitem.setEnabled(False)
-        self.exportas_menuitem.setEnabled(False)
-        self.close_menuitem.setEnabled(False)
-
     def __initTriggers(self):
         self.load_menuitem.triggered.connect(self.__openLbr)
         self.export_menuitem.triggered.connect(self.__exportLbr)
@@ -48,20 +45,24 @@ class EagleToolApp(QMainWindow):
         self.about_menuitem.triggered.connect(self.__about)
 
         self.device_list.itemSelectionChanged.connect(self.__deviceSelected)
-        self.variant_list.itemSelectionChanged.connect(self.__variantSelected)
+        self.footprint_list.itemSelectionChanged.connect(self.__footprintSelected)
 
     def __initSettings(self):
-        if Path('config/settings.json').exists():
-            with open('config/settings.json') as f:
-                self.settings = json.load(f)
+        with open('config/settings.json') as f:
+            self.settings = json.load(f)
 
-        gfx_theme_path = f'themes/gfx_{self.settings["gfx_theme"]}.json'
-        if Path(gfx_theme_path).exists():
-            with open(gfx_theme_path) as f:
-                self.gfx_theme = json.load(f)
+        gfx_path = 'themes/gfx_dark.json'
+        gfx_theme_select = self.settings['gfx_theme']
+        if gfx_theme_select == 'dark' or gfx_theme_select == 'light':
+            gfx_path = f'themes/gfx_{gfx_theme_select}.json'
         else:
-            with open('themes/gfx_dark.json') as f:
-                self.gfx_theme = json.load(f)
+            path_check = f'config/gfx_{gfx_theme_select}.json'
+            if Path(path_check).exists():
+                gfx_path = path_check
+        gfx_path = Path(gfx_path)
+
+        with open(gfx_path, 'r') as f:
+            self.gfx_theme = json.load(f)
 
     def __initGfx(self):
         self.gfx_backgroundColor = QColor(*(self.gfx_theme['background']))
@@ -111,16 +112,16 @@ class EagleToolApp(QMainWindow):
 
         return status
 
-    def __exitProgram(self):
+    def closeEvent(self, evt):
         if self.unsaved_changes:
             confirm = QMessageBox.warning(self, 'Exit Without Saving?', 'There are unsaved changes in the current working library.', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
             if confirm == QMessageBox.Save:
                 self.__exportLbr()
-                be.exit(self)
-            elif confirm == QMessageBox.Discard:
-                be.exit(self)
-        else:
-            be.exit(self)
+            elif confirm == QMessageBox.Cancel:
+                evt.ignore()
+
+    def __exitProgram(self):
+        self.close()
 
     def __userValueTool(self):
         print('selected set uservalue tool')
@@ -144,7 +145,31 @@ class EagleToolApp(QMainWindow):
         QMessageBox.about(self, 'About Eagle Library Tool', 'The Eagle Library Tool (perhaps come up with a cooler name?) is an Open Source tool provided under the MIT license.')
 
     def __deviceSelected(self):
-        pass
+        gfx.reset(self, self.symbol_scene, self.symbol_gfx)
+        gfx.reset(self, self.footprint_scene, self.footprint_gfx)
 
-    def __variantSelected(self):
-        pass
+        selected_device_name = self.device_list.currentItem().text()
+        self.selected_device_obj = self.lib_obj.getDevices(selected_device_name)
+        self.selected_footprint_obj = []
+        self.selected_symbol_objs = self.lib_obj.getSymbols(self.selected_device_obj)
+
+        be.setDeviceFootnotes(self)
+        be.setFootprintFootnotes(self)
+        be.setSymbolFootnotes(self)
+
+        be.populateList(self, 'footprints')
+
+        gfx.drawSymbol(self, self.symbol_scene, self.symbol_gfx)
+
+    def __footprintSelected(self):
+        gfx.reset(self, self.footprint_scene, self.footprint_gfx)
+
+        selected_footprint_name = self.footprint_list.currentItem().text()
+        self.selected_footprint_obj = self.lib_obj.getFootprints(self.selected_device_obj, selected_footprint_name)
+
+        be.setDeviceFootnotes(self)
+        be.setFootprintFootnotes(self)
+
+        if len(self.selected_footprint_obj) == 1:
+            gfx.drawFootprint(self, self.footprint_scene, self.footprint_gfx)
+

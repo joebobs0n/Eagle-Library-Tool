@@ -22,11 +22,13 @@
         - [x] If reply is `Yes`, library is closed out without `export`.
         - [x] If reply is `Save`, library is closed out after `export`.
         - [x] If reply is `Cancel`, nothing is done.
-    - [x] Exit
+    - [x] Exit - User selectes exit through menu option.
       - [x] Prompts user if they want to save before exit if there are unsaved changes.
         - [x] If reply is `Save`, program is exited after `export`.
         - [x] If reply is `Discard`, program is exited without `export`
         - [x] if reply is `Cancel`, nothing is done.
+    - [x] Close event - User presses `X` in window corner or `ALT+F4`
+      - [x] `Exit` functionality called
   - [ ] Tools
     - [ ] Bulk User Value Enabler
       - [ ] Opens new tool window.
@@ -51,3 +53,30 @@
 </br>
 
 - [ ] **Operation**
+  - [ ] Library Loading
+    - [x] Device list populated
+      - [x] According to settings, first option in list is selected.
+    - [x] Status label updated
+  - [ ] Device selected (manually or automatically)
+    - [x] Footprint list populated
+      - [x] According to settings, first option in list is selected.
+    - [x] `self.selected_device_obj` saved
+      - [x] device footnote updated
+    - [x] `self.selected_symbol_obj` saved
+      - [x] symbol footnote updated
+      - [ ] symbol drawn
+  - [ ] Footprint selected (manually or automatically)
+    - [x] `self.selected_footprint_obj` saved
+      - [x] footprint footnote updated
+      - [ ] footprint drawn
+
+</br>
+
+- [ ] **Known Issues/Bugs**
+  - [ ] `device_footnotes` and `footprint_footnotes` not updating correctly
+  - When:
+    - `settings.json` set to not load first on list population
+    - `testLib.lbr` loaded
+    - Selected `C_CHIP` or `R_CHIP`
+    - Selected `0603` or `0805`
+    - Then select `C_CHIP` or `R_CHIP`

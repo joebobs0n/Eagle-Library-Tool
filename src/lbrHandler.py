@@ -60,15 +60,26 @@ class EagleLibrary:
 
         if select:
             try:
-                footprints = [tupl for tupl in footprints if tupl[1].attrib['name'] == select][0]
+                footprints = [tupl for tupl in footprints if tupl[1].attrib['name'] == select]
             except:
                 return []
 
         return footprints
 
-    def getLayers(self):
+    def getLayers(self, number=None, name=None):
         layers = list(self.root.iter('layer'))
+        if number:
+            layers = [layer for layer in layers if layer.attrib['number'] == number]
+        if name:
+            layers = [layer for layer in layers if layer.attrib['name'] == name]
+
+        if len(layers) == 1:
+            layers = layers[0]
         return layers
+
+    def getElement(self, element):
+        elements = list(self.root.iter(element))
+        return elements
 
     def __recurse(self, element, depth=0):
         # tmp = f'{depth:2d}: {".  " * depth}{element.tag}{("-->" + str(element.attrib)) if len(element.attrib) > 0 else ""}\n'

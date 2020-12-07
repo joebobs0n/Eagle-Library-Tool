@@ -1,8 +1,7 @@
 {
     "theme": "light",
-    "lists_autoselect_first": 0,
     "save_opened_as_same_file": 0,
+    "lists_autoselect_first": 0,
 
-    "gfx_use_eagle_defautls": 1,
     "gfx_theme": "dark"
 }

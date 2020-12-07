@@ -36,7 +36,7 @@ class EagleToolApp(QtWidgets.QMainWindow):
         self.exportas_menuitem.triggered.connect(self.exportAsLbr)
         self.close_menuitem.triggered.connect(self.closeLbr)
         self.exit_menuitem.triggered.connect(self.exitProgram)
-        self.userdefined_menuitem.triggered.connect(self.userDefinedTool)
+        self.uservalue_menuitem.triggered.connect(self.userDefinedTool)
         self.nameprefix_menuitem.triggered.connect(self.namePrefixTool)
         self.merge_menuitem.triggered.connect(self.mergeTool)
         self.github_menuitem.triggered.connect(self.githubPage)
@@ -45,11 +45,11 @@ class EagleToolApp(QtWidgets.QMainWindow):
         self.about_menuitem.triggered.connect(self.about)
 
         self.device_list.itemSelectionChanged.connect(self.deviceSelected)
-        self.variant_list.itemSelectionChanged.connect(self.variantSelected)
+        self.footprint_list.itemSelectionChanged.connect(self.variantSelected)
 
     def initSettings(self):
-        if Path('settings.json').exists():
-            with open('settings.json') as f:
+        if Path('config/settings.json').exists():
+            with open('config/settings.json') as f:
                 self.settings = json.load(f)
 
         gfx_theme_path = f'themes/gfx_{self.settings["gfx_theme"]}.json'
@@ -122,9 +122,9 @@ class EagleToolApp(QtWidgets.QMainWindow):
         if closeOut == True:
             self.filename = None
             self.device_list.clear()
-            self.variant_list.clear()
+            self.footprint_list.clear()
             self.lib_obj = None
-            self.connection_footnotes.setText('')
+            self.device_footnotes.setText('')
             self.footprint_footnotes.setText('')
             self.symbol_footnotes.setText('')
 
@@ -173,7 +173,7 @@ class EagleToolApp(QtWidgets.QMainWindow):
         device_message_temp = ''
         for connection in self.connections:
             device_message_temp += f'{self.lib_obj.printLibraryStructure(connection)}\n'
-        self.connection_footnotes.setText(device_message_temp)
+        self.device_footnotes.setText(device_message_temp)
 
     def setFootprintFootnotes(self):
         if len(self.selected_variant_obj) > 0:
@@ -219,7 +219,7 @@ class EagleToolApp(QtWidgets.QMainWindow):
         self.drawSymbol()
 
     def variantSelected(self):
-        self.selected_variant_name = self.variant_list.currentItem().text()
+        self.selected_variant_name = self.footprint_list.currentItem().text()
         self.selected_variant_obj = self.lib_obj.getFootprints(self.selected_device_obj, self.selected_variant_name)
         self.setConnectionFootnotes()
         self.setFootprintFootnotes()
@@ -235,30 +235,32 @@ class EagleToolApp(QtWidgets.QMainWindow):
             if self.settings['lists_autoselect_first']:
                 self.device_list.setCurrentRow(0)
         elif list == 'variants':
-            self.variant_list.clear()
+            self.footprint_list.clear()
             self.variant_objs = self.lib_obj.getFootprints(self.selected_device_obj)
             for variant in self.variant_objs:
                 _, ftp = variant
-                self.variant_list.addItem(ftp.attrib['name'])
+                self.footprint_list.addItem(ftp.attrib['name'])
             if self.settings['lists_autoselect_first']:
-                self.variant_list.setCurrentRow(0)
+                self.footprint_list.setCurrentRow(0)
 
     def drawSymbol(self):
-        self.resetGfx(self.symbol_scene, self.symbol_gfx)
-        if self.settings['gfx_display_name']:
-            symbolNames = [obj[1].attrib['name'] for obj in self.selected_symbol_objs]
-            for idx, name in enumerate(symbolNames):
-                text = self.symbol_scene.addText(name)
-                text.setPos(-245, -245 + idx*12)
-                text.setDefaultTextColor(ev.layerColors['4'])
+        # self.resetGfx(self.symbol_scene, self.symbol_gfx)
+        # if self.settings['gfx_display_name']:
+        #     symbolNames = [obj[1].attrib['name'] for obj in self.selected_symbol_objs]
+        #     for idx, name in enumerate(symbolNames):
+        #         text = self.symbol_scene.addText(name)
+        #         text.setPos(-245, -245 + idx*12)
+        #         text.setDefaultTextColor(ev.layerColors['4'])
+        pass
 
     def drawFootprint(self):
-        self.resetGfx(self.footprint_scene, self.footprint_gfx)
-        if self.settings['gfx_display_name']:
-            try:
-                footprintName = self.selected_variant_obj[1].attrib['name']
-                text = self.footprint_scene.addText(footprintName)
-                text.setPos(-245, -245)
-                text.setDefaultTextColor(ev.layerColors['4'])
-            except:
-                pass
+        # self.resetGfx(self.footprint_scene, self.footprint_gfx)
+        # if self.settings['gfx_display_name']:
+        #     try:
+        #         footprintName = self.selected_variant_obj[1].attrib['name']
+        #         text = self.footprint_scene.addText(footprintName)
+        #         text.setPos(-245, -245)
+        #         text.setDefaultTextColor(ev.layerColors['4'])
+        #     except:
+        #         pass
+        pass
