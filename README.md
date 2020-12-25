@@ -53,11 +53,13 @@
 </br>
 
 - [ ] **Operation**
-  - [ ] Library Loading
+  - [x] Library Loading
     - [x] Device list populated
       - [x] According to settings, first option in list is selected.
     - [x] Status label updated
   - [ ] Device selected (manually or automatically)
+    - [x] Symbol scene reset
+    - [x] Footprint scene reset
     - [x] Footprint list populated
       - [x] According to settings, first option in list is selected.
     - [x] `self.selected_device_obj` saved
@@ -66,15 +68,16 @@
       - [x] symbol footnote updated
       - [ ] symbol drawn
   - [ ] Footprint selected (manually or automatically)
+    - [x] Footprint scene reset
     - [x] `self.selected_footprint_obj` saved
+      - [x] device footnote updated
       - [x] footprint footnote updated
       - [ ] footprint drawn
 
 </br>
 
 - [ ] **Known Issues/Bugs**
-  - [ ] `device_footnotes` and `footprint_footnotes` not updating correctly
-  - When:
+  - [ ] `device_footnotes` and `footprint_footnotes` not updating correctly when:
     - `settings.json` set to not load first on list population
     - `testLib.lbr` loaded
     - Selected `C_CHIP` or `R_CHIP`

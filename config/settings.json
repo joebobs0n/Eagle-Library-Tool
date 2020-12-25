@@ -1,7 +1,7 @@
 {
     "theme": "light",
     "save_opened_as_same_file": 0,
-    "lists_autoselect_first": 0,
+    "lists_autoselect_first": 1,
 
     "gfx_theme": "dark"
 }

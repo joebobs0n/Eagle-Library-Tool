@@ -2,4 +2,4 @@
 
 def dump(obj):
     for attr in dir(obj):
-        print("obj.%s = %r" % (attr, getattr(obj, attr)))
+        print(f'obj.{attr} = {getattr(obj, attr)}')
